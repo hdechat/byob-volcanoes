@@ -1,0 +1,23 @@
+{
+  "name": "BYOB-Volcanoes",
+  "version": "1.0.0",
+  "description": "",
+  "main": "knexfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "./node_modules/eslint/bin/eslint.js ./ --ignore-pattern node_modules/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hdechat/byob-volcanoes.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hdechat/byob-volcanoes/issues"
+  },
+  "homepage": "https://github.com/hdechat/byob-volcanoes#readme",
+  "devDependencies": {
+    "eslint": "^5.1.0"
+  }
+}

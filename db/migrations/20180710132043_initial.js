@@ -15,12 +15,12 @@ exports.up = function(knex, Promise) {
       table.string('name');
       table.string('country');
       table.integer('last_eruption');
-      table.integer('geological_info_id').unsigned()
+      table.integer('geological_info_id').unsigned();
       table.foreign('geological_info_id')
         .references('geological_info.id');
 
       table.timestamps(true, true);
-    });
+    })
   ]);
 };
 

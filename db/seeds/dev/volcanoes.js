@@ -18,3 +18,16 @@ exports.seed = function(knex, Promise) {
     return Promise.all(volcanoPromises)
   })
 }
+
+const createVolcano = (knex, volcano, geoInfo) => {
+  const { volcano_type, rock_type, tectonic } = geoInfo
+  return knex('geological_info').where('volcano_type', volcano_type).where('rock_type', rock_type).where('tectonic', tectonic).first()
+  .then((geoInfoId) => {
+    return knex('volcanoes').insert({
+      name: volcano.name,
+      country: volcano.country,
+      last_known_eruption: volcano.last_known_eruption,
+      geological_info_id: geoInfoId.id
+    })
+  })
+}

@@ -50,11 +50,26 @@ app.get('/api/v1/volcanoes/:name', (request, response) => {
     });
 });
 
+app.get('/api/v1/volcanoes/country/:country', (request, response) => {
+  const { country } = request.params;
+  database('volcanoes').where('country', country).select('name')
+    .then(names => {
+      if (names.length) {
+        response.status(200).json(names);
+      } else {
+        response.status(404).send('No volcanoes listed for that country');
+      }
+    })
+    .catch(error => {
+      response.status(500).json({ error });
+    });
+});
+
 app.listen(app.get('port'), () => {
   console.log(`Sever is running on ${app.get('port')}.`);
 });
 
-app.use((request, response, next) => {
+app.use((request, response) => {
   response.status(404).send('PAGE NOT FOUND');
 });
 

@@ -118,4 +118,4 @@ module.exports = [{
   volcano_type: 'Lava dome',
   rock_type: 'Rhyolite',
   tectonic: 'Intraplate'
-}]
+}];

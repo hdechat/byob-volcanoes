@@ -5,7 +5,7 @@ exports.up = function(knex, Promise) {
       table.dropColumn('last_eruption');
       table.string('last_known_eruption');
     })
-  ])
+  ]);
 };
 
 exports.down = function(knex, Promise) {
@@ -14,5 +14,5 @@ exports.down = function(knex, Promise) {
       table.integer('last_eruption');
       table.dropColumn('last_known_eruption');
     })
-  ])
+  ]);
 };

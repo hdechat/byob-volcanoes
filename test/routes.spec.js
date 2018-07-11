@@ -65,4 +65,37 @@ describe('API Routes', () => {
       done();
     });
   });
+
+  describe('GET /api/v1/volcanoes/:name', () => {
+    it('should return all the information for volcano name given as the parameter', done => {
+      chai.request(server)
+        .get('/api/v1/volcanoes/Vesuvius')
+        .end((err, response) => {
+          console.log(response.body)
+          response.should.have.status(200);
+          response.should.be.json;
+          response.body.should.be.a('object');
+          response.body.should.have.property('name');
+          response.body.name.should.equal('Vesuvius');
+          response.body.should.have.property('country');
+          response.body.country.should.equal('Italy');
+          response.body.should.have.property('geoInfo');
+          response.body.geoInfo.should.be.a('object');
+        });
+      done();
+    });
+  });
+
+//DUMMY BLOCK TO WORK AROUND MOCHA/CHAI BUG (LAST BLOCK WILL PASS EVEN WHEN IT SHOULDN'T)
+describe('GET /api/v1/volcanoes/:name', () => {
+    it('should return all the information for volcano name given as the parameter', done => {
+      chai.request(server)
+        .get('/api/v1/volcanoes/Vesuvius')
+        .end((err, response) => {
+          response.should.have.status(200);
+          response.should.be.json;
+        });
+      done();
+    });
+  });
 });

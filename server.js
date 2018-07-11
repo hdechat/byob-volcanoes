@@ -29,6 +29,26 @@ app.get('/api/v1/geo-info', (request, response) => {
     })
 });
 
+app.get('/api/v1/volcanoes/:name', (request, response) => {
+  const { name } = request.params
+  database('volcanoes').where('name', name).select()
+  .then(volcano => {
+    if (volcano.length) {
+      const { geological_info_id } = volcano[0]
+      database('geological_info').where('id', geological_info_id).select()
+      .then(geoInfo => {
+        const volcanoInfo = Object.assign(volcano[0], {geoInfo: geoInfo[0]})
+        response.status(200).json(volcanoInfo)
+      })
+    } else {
+      response.status(404).send('Volcano does not exist')
+    }
+  })
+  .catch(error => {
+    response.status(500).json({ error })
+  })
+})
+
 app.listen(app.get('port'), () => {
   console.log(`Sever is running on ${app.get('port')}.`)
 });

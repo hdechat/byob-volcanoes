@@ -1,12 +1,20 @@
+const geoData = require('../../../data/geological-info.js')
+const volcanoesData = require('../../../data/volcanoes-data.js')
+
 exports.seed = function(knex, Promise) {
-  // Deletes ALL existing entries
-  return knex('table_name').del()
-    .then(function () {
-      // Inserts seed entries
-      return knex('table_name').insert([
-        {id: 1, colName: 'rowValue1'},
-        {id: 2, colName: 'rowValue2'},
-        {id: 3, colName: 'rowValue3'}
-      ]);
-    });
-};
+  return knex('volcanoes').del()
+  .then(() => {
+    return knex('geological_info').del()
+  })
+  .then(() => {
+    return knex('geological_info').insert(geoData)
+  })
+  .then(() => {
+    let volcanoPromises = []
+    volcanoesData.forEach((volcano) => {
+      let geoInfo = volcano.geo_info
+      volcanoPromises.push(createVolcano(knex, volcano, geoInfo))
+    })
+    return Promise.all(volcanoPromises)
+  })
+}

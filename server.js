@@ -32,3 +32,9 @@ app.get('/api/v1/geo-info', (request, response) => {
 app.listen(app.get('port'), () => {
   console.log(`Sever is running on ${app.get('port')}.`)
 });
+
+app.use((request, response, next) => {
+  response.status(404).send('PAGE NOT FOUND')
+})
+
+module.exports = app

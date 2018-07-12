@@ -124,4 +124,21 @@ describe('API Routes', () => {
         });
     });
   });
+
+  describe('POST /api/v1/volcanoes', () => {
+    it('should not create a new volcano if not given all the required information', done => {
+      chai.request(server)
+        .post('/api/v1/volcanoes')
+        .send({
+          name: 'Kablamo',
+          country: 'Ork',
+        })
+        .end((err, response) => {
+          response.should.have.status(422);
+          response.body.should.be.a('object');
+          response.body.should.have.property('error');
+          done();
+        });
+    });
+  });
 });

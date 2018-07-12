@@ -71,11 +71,28 @@ app.delete('/api/v1/volcanoes/:id', (request, response) => {
   database('volcanoes').where('id', id).select()
     .then(volcano => {
       if (!volcano.length) {
-        response.status(404).json({ error: `Could not find project with id: ${id}` });
+        response.status(404)
+          .json({ error: `Could not find project with id: ${id}` });
       } else {
         database('volcanoes').where('id', id).delete()
           .then(() => response.sendStatus(204))
           .catch(error => response.status(500).json({ error }));
+      }
+    })
+    .catch(error => response.status(500).json({ error }));
+});
+
+app.put('/api/v1/volcanoes/:id', (request, response) => {
+  const { id } = request.params;
+  const update = request.body;
+
+  database('volcanoes').where('id', id).update(update)
+    .then(volcano => {
+      if (volcano) {
+        response.status(200).json(request.body);
+      } else {
+        response.status(404)
+          .json({ error: `Could not find project with id: ${id}`});
       }
     })
     .catch(error => response.status(500).json({ error }));

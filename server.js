@@ -143,6 +143,38 @@ app.post('/api/v1/geo-info', verifyPostBody, (request, response) => {
     });
 });
 
+const verifyKeys = (request, response, next) => {
+  const geoInfo = request.body;
+  const { id } = request.params;
+
+  database('geological_info').where('id', id).select()
+    .then(returnedInfo => {
+      const hasKeys = Object.keys(geoInfo)
+        .find(key => Object.keys(returnedInfo[0]).includes(key));
+      if (hasKeys) {
+        next();
+      } else {
+        response.status(422).send('Please provide valide key/value to update');
+      }
+    });
+};
+
+app.patch('/api/v1/geo-info/:id', verifyKeys, (request, response) => {
+  const geoInfo = request.body;
+  const { id } = request.params;
+
+  database('geological_info').where('id', id).select().update(geoInfo)
+    .then(() => {
+      database('geological_info').where('id', id).select()
+        .then(updatedGeoInfo => {
+          response.status(200).json(updatedGeoInfo);
+        });
+    })
+    .catch(error => {
+      response.status(500).json(error);
+    });
+});
+
 app.listen(app.get('port'), () => {
   // eslint-disable-next-line no-console
   console.log(`Sever is running on ${app.get('port')}.`);

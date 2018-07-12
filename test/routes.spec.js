@@ -126,7 +126,6 @@ describe('API Routes', () => {
     });
   });
 
-<<<<<<< HEAD
   describe('POST /api/v1/volcanoes', () => {
     it('should not create a new volcano if not given all the required information', done => {
       chai.request(server)
@@ -143,18 +142,4 @@ describe('API Routes', () => {
         });
     });
   });
-=======
-  //DUMMY BLOCK TO WORK AROUND BUG (LAST BLOCK WILL PASS WHEN FAILING)
-  // describe('GET /api/v1/volcanoes/:name', () => {
-  //   it('should return all the info for given volcano name', done => {
-  //     chai.request(server)
-  //       .get('/api/v1/volcanoes/Vesuvius')
-  //       .end((err, response) => {
-  //         response.should.have.status(200);
-  //         response.should.be.json;
-  //       });
-  //     done();
-  //   });
-  // });
->>>>>>> Fix beforeEach logic
 });

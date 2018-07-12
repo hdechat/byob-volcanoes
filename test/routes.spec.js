@@ -1,4 +1,5 @@
 const chai = require('chai');
+// eslint-disable-next-line no-unused-vars
 const should = chai.should();
 const chaiHttp = require('chai-http');
 const server = require('../server');
@@ -83,7 +84,7 @@ describe('API Routes', () => {
   });
 
   describe('GET /api/v1/volcanoes/:name', () => {
-    it('should return all the information for volcano name given as the parameter', done => {
+    it('should return all the info for given volcano name', done => {
       chai.request(server)
         .get('/api/v1/volcanoes/Vesuvius')
         .end((err, response) => {
@@ -100,7 +101,7 @@ describe('API Routes', () => {
         });
     });
 
-    it('should return status 404 with message if given an unlisted volcano name as parameter', done => {
+    it('should return status 404 if parameter doesn\'t exist', done => {
       chai.request(server)
         .get('/api/v1/volcanoes/Kaboom')
         .end((err, response) => {
@@ -111,7 +112,7 @@ describe('API Routes', () => {
   });
 
   describe('GET /api/v1/volcanoes/country/:country', () => {
-    it('should return all the volcano names for the country given as the parameter', done => {
+    it('should return all the volcano names for the given country', done => {
       chai.request(server)
         .get('/api/v1/volcanoes/country/Italy')
         .end((err, response) => {

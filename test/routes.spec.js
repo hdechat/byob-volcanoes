@@ -83,6 +83,15 @@ describe('API Routes', () => {
         });
       done();
     });
+
+    it('should return status 404 with message if given an unlisted volcano name as parameter', done => {
+      chai.request(server)
+        .get('/api/v1/volcanoes/Kaboom')
+        .end((err, response) => {
+          response.should.have.status(404);
+        });
+      done();
+    });
   });
 
   describe('GET /api/v1/volcanoes/country/:country', () => {

@@ -175,11 +175,33 @@ app.patch('/api/v1/geo-info/:id', verifyKeys, (request, response) => {
     });
 });
 
-app.delete('/api/v1/geo-info/:id', (request, response) => {
-  const { id } = request.params;
+const verifyDelete = (request, response, next) => {
+  var { id } = request.params;
 
-  database.select('*').from('geological_info').where('id', id)
-    .then(deletedId => response.status(201).json(deletedId))
+  database('geological_info').where('id', id)
+    .then(deletedItem => {
+      if (deletedItem.length) {
+        next();
+      } else {
+        response.status(400).send('Requested delete item not found');
+      }
+    });
+};
+
+
+app.delete('/api/v1/geo-info/:id', verifyDelete, (request, response) => {
+  const { id } = request.params;
+  let deletedVolcanoes = [];
+
+  database.select('*').from('volcanoes').where('geological_info_id', id).del()
+    .then(relatedVolcanoes => {
+      deletedVolcanoes.push(relatedVolcanoes);
+      database.select('*').from('geological_info').where('id', id).del()
+        .then(deletedObject => response.status(200).json({
+          deletedVolcanoes,
+          deletedObject
+        }));
+    })
     .catch(error => response.status(500).json(error));
 });
 

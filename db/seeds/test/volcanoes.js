@@ -29,9 +29,12 @@ exports.seed = function(knex, Promise) {
               }
             ]);
           })
+          // eslint-disable-next-line no-console
           .then(() => console.log('Seeding complete!'))
+          // eslint-disable-next-line no-console
           .catch(error => console.log(`Error seeding data: ${error}`))
       ]);
     })
+    // eslint-disable-next-line no-console
     .catch(error => console.log(`Error seeding data: ${error}`));
 };

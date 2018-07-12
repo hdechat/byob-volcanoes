@@ -87,7 +87,8 @@ app.put('/api/v1/volcanoes/:id', (request, response) => {
   const update = request.body;
 
   for (let props of Object.keys(update)) {
-    if (!['name', 'country', 'last_known_eruption', 'geological_info_id'].includes(props)) {
+    if (!['name', 'country', 'last_known_eruption', 'geological_info_id']
+      .includes(props)) {
       return response.status(422).send({
         error: 'Invalid key. See README for valid PUT body instructions'
       });
@@ -114,13 +115,99 @@ app.post('/api/v1/volcanoes', (request, response) => {
       error: 'Invalid entry. See README for valid POST body instructions'
     });
   }
-  
+
   database('volcanoes').insert(volcano, 'id')
     .then(volcanoId => response.status(201).json({ id: volcanoId[0] }))
     .catch(error => response.status(500).json({ error }));
 });
 
+const verifyPostBody = (request, response, next) => {
+  const geoInfo = request.body;
+  const { rock_type, volcano_type, tectonic } = geoInfo;
+
+  if (rock_type && volcano_type && tectonic) {
+    next();
+  } else {
+    response.status(422).send('You must use a valid request body');
+  }
+};
+
+app.post('/api/v1/geo-info', verifyPostBody, (request, response) => {
+  const geoInfo = request.body;
+
+  database('geological_info').insert(geoInfo, 'id')
+    .then(geoInfoId => {
+      response.status(201).json(geoInfoId);
+    })
+    .catch(error => {
+      response.status(500).json(error);
+    });
+});
+
+const verifyKeys = (request, response, next) => {
+  const geoInfo = request.body;
+  const { id } = request.params;
+
+  database('geological_info').where('id', id).select()
+    .then(returnedInfo => {
+      const hasKeys = Object.keys(geoInfo)
+        .find(key => Object.keys(returnedInfo[0]).includes(key));
+      if (hasKeys) {
+        next();
+      } else {
+        response.status(422).send('Please provide valide key/value to update');
+      }
+    });
+};
+
+app.patch('/api/v1/geo-info/:id', verifyKeys, (request, response) => {
+  const geoInfo = request.body;
+  const { id } = request.params;
+
+  database('geological_info').where('id', id).select().update(geoInfo)
+    .then(() => {
+      database('geological_info').where('id', id).select()
+        .then(updatedGeoInfo => {
+          response.status(200).json(updatedGeoInfo);
+        });
+    })
+    .catch(error => {
+      response.status(500).json(error);
+    });
+});
+
+const verifyDelete = (request, response, next) => {
+  var { id } = request.params;
+
+  database('geological_info').where('id', id)
+    .then(deletedItem => {
+      if (deletedItem.length) {
+        next();
+      } else {
+        response.status(400).send('Requested delete item not found');
+      }
+    });
+};
+
+
+app.delete('/api/v1/geo-info/:id', verifyDelete, (request, response) => {
+  const { id } = request.params;
+  let deletedVolcanoes = [];
+
+  database.select('*').from('volcanoes').where('geological_info_id', id).del()
+    .then(relatedVolcanoes => {
+      deletedVolcanoes.push(relatedVolcanoes);
+      database.select('*').from('geological_info').where('id', id).del()
+        .then(deletedObject => response.status(200).json({
+          deletedVolcanoes,
+          deletedObject
+        }));
+    })
+    .catch(error => response.status(500).json(error));
+});
+
 app.listen(app.get('port'), () => {
+  // eslint-disable-next-line no-console
   console.log(`Sever is running on ${app.get('port')}.`);
 });
 

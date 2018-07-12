@@ -1,4 +1,5 @@
 const chai = require('chai');
+// eslint-disable-next-line no-unused-vars
 const should = chai.should();
 const chaiHttp = require('chai-http');
 const server = require('../server');
@@ -83,7 +84,7 @@ describe('API Routes', () => {
   });
 
   describe('GET /api/v1/volcanoes/:name', () => {
-    it('should return all the information for volcano name given as the parameter', done => {
+    it('should return all the info for given volcano name', done => {
       chai.request(server)
         .get('/api/v1/volcanoes/Vesuvius')
         .end((err, response) => {
@@ -100,7 +101,7 @@ describe('API Routes', () => {
         });
     });
 
-    it('should return status 404 with message if given an unlisted volcano name as parameter', done => {
+    it('should return status 404 if parameter doesn\'t exist', done => {
       chai.request(server)
         .get('/api/v1/volcanoes/Kaboom')
         .end((err, response) => {
@@ -111,7 +112,7 @@ describe('API Routes', () => {
   });
 
   describe('GET /api/v1/volcanoes/country/:country', () => {
-    it('should return all the volcano names for the country given as the parameter', done => {
+    it('should return all the volcano names for the given country', done => {
       chai.request(server)
         .get('/api/v1/volcanoes/country/Italy')
         .end((err, response) => {
@@ -126,7 +127,7 @@ describe('API Routes', () => {
   });
 
   describe('POST /api/v1/volcanoes', () => {
-    it('should not create a new volcano if not given all the required information', done => {
+    it('should not create a new volcano if sent incorrect request', done => {
       chai.request(server)
         .post('/api/v1/volcanoes')
         .send({
@@ -137,6 +138,39 @@ describe('API Routes', () => {
           response.should.have.status(422);
           response.body.should.be.a('object');
           response.body.should.have.property('error');
+          done();
+        });
+    });
+  });
+
+  describe('POST /api/v1/geo-info', () => {
+    it('should return new post item id', done => {
+      chai.request(server)
+        .post('/api/v1/geo-info')
+        .send({
+          'volcano_type': 'Stratovolcano',
+          'rock_type':'Adesite',
+          'tectonic': 'Subduction zone'
+        })
+        .end((err, response) => {
+          response.should.have.status(201);
+          response.should.be.json;
+          response.body.should.be.a('array');
+          response.body[0].should.equal(2);
+          done();
+        });
+    });
+
+    it('should not post new geo-info with invalid request body', done => {
+      chai.request(server)
+        .post('/api/v1/geo-info')
+        .send({
+          'rock_type':'Adesite',
+          'tectonic': 'Subduction zone'
+        })
+        .end((err, response) => {
+          response.should.have.status(422);
+          response.res.text.should.equal('You must use a valid request body');
           done();
         });
     });

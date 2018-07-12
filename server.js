@@ -175,6 +175,14 @@ app.patch('/api/v1/geo-info/:id', verifyKeys, (request, response) => {
     });
 });
 
+app.delete('/api/v1/geo-info/:id', (request, response) => {
+  const { id } = request.params;
+
+  database.select('*').from('geological_info').where('id', id)
+    .then(deletedId => response.status(201).json(deletedId))
+    .catch(error => response.status(500).json(error));
+});
+
 app.listen(app.get('port'), () => {
   // eslint-disable-next-line no-console
   console.log(`Sever is running on ${app.get('port')}.`);

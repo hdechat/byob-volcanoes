@@ -40,7 +40,6 @@
         "allowSingleLine": true
       }
     ],
-    "camelcase": "warn",
     "comma-dangle": [
       "error",
       "only-multiline"
@@ -86,7 +85,6 @@
     "id-length": "error",
     "id-blacklist": [
       "error",
-      "err",
       "e",
       "cb",
       "callback",

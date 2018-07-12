@@ -124,7 +124,6 @@ describe('API Routes', () => {
           done();
         });
     });
-  });
 
   describe('POST /api/v1/volcanoes', () => {
     it('should not create a new volcano if not given all the required information', done => {
@@ -140,6 +139,38 @@ describe('API Routes', () => {
           response.body.should.have.property('error');
           done();
         });
+
+    describe('POST /api/v1/geo-info', () => {
+      it('should return new post item id', done => {
+        chai.request(server)
+          .post('/api/v1/geo-info')
+          .send({
+            'volcano_type': 'Stratovolcano',
+            'rock_type':'Adesite',
+            'tectonic': 'Subduction zone'
+          })
+          .end((err, response) => {
+            response.should.have.status(201);
+            response.should.be.json;
+            response.body.should.be.a('array');
+            response.body[0].should.equal(2)
+            done();
+          });
+      });
+
+      it('should not post new geo-info with invalid request body', done => {
+        chai.request(server)
+          .post('/api/v1/geo-info')
+          .send({
+            'rock_type':'Adesite',
+            'tectonic': 'Subduction zone'
+          })
+          .end((err, response) => {
+            response.should.have.status(422);
+            response.res.text.should.equal('You must use a valid request body')
+            done();
+          });
+      });
     });
   });
 });

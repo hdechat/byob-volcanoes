@@ -23,7 +23,6 @@ const checkAuth = (request, response, next) => {
       } else {
           const adminCheck = request.body.email.slice(request.body.email
             .search(/@/)).match(/@turing.io/)
-          console.log(adminCheck)
           if (decoded.app === 'volcanoes' && adminCheck) {
           next();
         } else {
@@ -119,9 +118,16 @@ app.delete('/api/v1/volcanoes/:id', checkAuth, (request, response) => {
     .catch(error => response.status(500).json({ error }));
 });
 
-app.put('/api/v1/volcanoes/:id', (request, response) => {
+const deleteSensitiveInfo = (payload) => {
+  delete payload['email'];
+  delete payload['app'];
+  delete payload['token'];
+  return payload;
+}
+
+app.put('/api/v1/volcanoes/:id', checkAuth, (request, response) => {
+  const update = deleteSensitiveInfo(request.body);
   const { id } = request.params;
-  const update = request.body;
 
   for (let props of Object.keys(update)) {
     if (!['name', 'country', 'last_known_eruption', 'geological_info_id']
@@ -144,8 +150,8 @@ app.put('/api/v1/volcanoes/:id', (request, response) => {
     .catch(error => response.status(500).json({ error }));
 });
 
-app.post('/api/v1/volcanoes', (request, response) => {
-  const volcano = request.body;
+app.post('/api/v1/volcanoes', checkAuth, (request, response) => {
+  const volcano = deleteSensitiveInfo(request.body);
 
   if (!volcano.name || !volcano.country || !volcano.geological_info_id) {
     return response.status(422).send({
@@ -169,8 +175,8 @@ const verifyPostBody = (request, response, next) => {
   }
 };
 
-app.post('/api/v1/geo-info', verifyPostBody, (request, response) => {
-  const geoInfo = request.body;
+app.post('/api/v1/geo-info', checkAuth, verifyPostBody, (request, response) => {
+  const geoInfo = deleteSensitiveInfo(request.body);
 
   database('geological_info').insert(geoInfo, 'id')
     .then(geoInfoId => {
@@ -197,8 +203,8 @@ const verifyKeys = (request, response, next) => {
     });
 };
 
-app.patch('/api/v1/geo-info/:id', verifyKeys, (request, response) => {
-  const geoInfo = request.body;
+app.patch('/api/v1/geo-info/:id', checkAuth, verifyKeys, (request, response) => {
+  const geoInfo = deleteSensitiveInfo(request.body);
   const { id } = request.params;
 
   database('geological_info').where('id', id).select().update(geoInfo)
@@ -227,7 +233,7 @@ const verifyDelete = (request, response, next) => {
 };
 
 
-app.delete('/api/v1/geo-info/:id', verifyDelete, (request, response) => {
+app.delete('/api/v1/geo-info/:id', checkAuth, verifyDelete, (request, response) => {
   const { id } = request.params;
   let deletedVolcanoes = [];
 

@@ -132,7 +132,10 @@ describe('API Routes', () => {
         .post('/api/v1/volcanoes')
         .send({
           name: 'Kablamo',
-          country: 'Ork',
+          bicycles: 'Ork',
+          email:'papa@turing.io',
+          app: 'volcanoes',
+          token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InBhcGFhQHR1cmluZy5pbyIsImFwcCI6InZvbGNhbm9lcyIsImlhdCI6MTUzMTQyODI5MX0.21wcefiQCWQ3Xt_HVLHMpUkNmVVAcJZeOuuR0J3QQMo'
         })
         .end((err, response) => {
           response.should.have.status(422);
@@ -150,13 +153,16 @@ describe('API Routes', () => {
         .send({
           'volcano_type': 'Stratovolcano',
           'rock_type':'Adesite',
-          'tectonic': 'Subduction zone'
+          'tectonic': 'Subduction zone',
+          'email':'papa@turing.io',
+          'app': 'volcanoes',
+          'token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InBhcGFhQHR1cmluZy5pbyIsImFwcCI6InZvbGNhbm9lcyIsImlhdCI6MTUzMTQyODI5MX0.21wcefiQCWQ3Xt_HVLHMpUkNmVVAcJZeOuuR0J3QQMo'
         })
         .end((err, response) => {
           response.should.have.status(201);
           response.should.be.json;
           response.body.should.be.a('array');
-          response.body[0].should.equal(2);
+          response.body.length.should.equal(1);
           done();
         });
     });
@@ -166,7 +172,10 @@ describe('API Routes', () => {
         .post('/api/v1/geo-info')
         .send({
           'rock_type':'Adesite',
-          'tectonic': 'Subduction zone'
+          'tectonic': 'Subduction zone',
+          'email':'papa@turing.io',
+          'app': 'volcanoes',
+          'token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InBhcGFhQHR1cmluZy5pbyIsImFwcCI6InZvbGNhbm9lcyIsImlhdCI6MTUzMTQyODI5MX0.21wcefiQCWQ3Xt_HVLHMpUkNmVVAcJZeOuuR0J3QQMo'
         })
         .end((err, response) => {
           response.should.have.status(422);

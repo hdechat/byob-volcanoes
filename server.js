@@ -117,9 +117,9 @@ app.post('/api/v1/volcanoes', (request, response) => {
 
   database('volcanoes').insert(volcano, 'id')
     .then(volcanoId => response.status(201).json({ id: volcanoId[0] }))
-    .catch(error => response.status(500).json({ error }));
+    .catch(error => response.status(500).json({ error }))
+  });
 
-app.post('/api/v1/geo-info', (request, response) => {
 const verifyPostBody = (request, response, next) => {
   const geoInfo = request.body;
   const { rock_type, volcano_type, tectonic } = geoInfo;
@@ -129,7 +129,7 @@ const verifyPostBody = (request, response, next) => {
   } else {
     response.status(422).send('You must use a valid request body');
   }
-};
+});
 
 app.post('/api/v1/geo-info', verifyPostBody, (request, response) => {
   const geoInfo = request.body;

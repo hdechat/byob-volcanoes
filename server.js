@@ -114,10 +114,21 @@ app.post('/api/v1/volcanoes', (request, response) => {
       error: 'Invalid entry. See README for valid POST body instructions'
     });
   }
-  
+
   database('volcanoes').insert(volcano, 'id')
     .then(volcanoId => response.status(201).json({ id: volcanoId[0] }))
     .catch(error => response.status(500).json({ error }));
+
+app.post('/api/v1/geo-info', (request, response) => {
+  const geoInfo = request.body;
+
+  database('geological_info').insert(geoInfo, 'id')
+    .then(geoInfoId => {
+      response.status(201).json(geoInfoId);
+    })
+    .catch(error => {
+      response.status(500).json(error);
+    });
 });
 
 app.listen(app.get('port'), () => {

@@ -1,4 +1,4 @@
-require('dotenv').config()
+require('dotenv').config();
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
@@ -13,20 +13,21 @@ app.set('port', process.env.PORT || 3000);
 app.set('secretKey', process.env.secretKey);
 
 const checkAuth = (request, response, next) => {
-  const { token, email } = request.body
+  const { token, email } = request.body;
   if (!token) {
-    response.status(400).send('You must be authorized to access this endpoint.')
+    response.status(400)
+      .send('You must be authorized to access this endpoint.');
   } else {
     jwt.verify(token, app.get('secretKey'), (err, decoded) => {
       if (err) {
-        response.status(403).send('Invalid token')
+        response.status(403).send('Invalid token');
       } else {
-          const adminCheck = request.body.email.slice(request.body.email
-            .search(/@/)).match(/@turing.io/)
-          if (decoded.app === 'volcanoes' && adminCheck) {
+        const adminCheck = email.slice(email
+          .search(/@/)).match(/@turing.io/);
+        if (decoded.app === 'volcanoes' && adminCheck) {
           next();
         } else {
-          response.status(403).send('You do not have administrative access')
+          response.status(403).send('You do not have administrative access');
         }
       }
     });
@@ -90,10 +91,10 @@ app.get('/api/v1/volcanoes/country/:country', (request, response) => {
 });
 
 app.post('/api/v1/auth', (request, response) => {
-  const payload = request.body
+  const payload = request.body;
 
   if (!payload.email || !payload.app) {
-    response.status(422).json({ error: "Both email and app name required" })
+    response.status(422).json({ error: "Both email and app name required" });
   }
 
   const secretKey = app.get('secretKey');
@@ -123,7 +124,7 @@ const deleteSensitiveInfo = (payload) => {
   delete payload['app'];
   delete payload['token'];
   return payload;
-}
+};
 
 app.put('/api/v1/volcanoes/:id', checkAuth, (request, response) => {
   const update = deleteSensitiveInfo(request.body);
@@ -231,7 +232,6 @@ const verifyDelete = (request, response, next) => {
       }
     });
 };
-
 
 app.delete('/api/v1/geo-info/:id', checkAuth, verifyDelete, (request, response) => {
   const { id } = request.params;

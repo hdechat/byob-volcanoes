@@ -1,3 +1,4 @@
+const token = require('./token');
 const chai = require('chai');
 // eslint-disable-next-line no-unused-vars
 const should = chai.should();
@@ -135,7 +136,7 @@ describe('API Routes', () => {
           bicycles: 'Ork',
           email:'papa@turing.io',
           app: 'volcanoes',
-          token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InBhcGFhQHR1cmluZy5pbyIsImFwcCI6InZvbGNhbm9lcyIsImlhdCI6MTUzMTQyODI5MX0.21wcefiQCWQ3Xt_HVLHMpUkNmVVAcJZeOuuR0J3QQMo'
+          token: token
         })
         .end((err, response) => {
           response.should.have.status(422);
@@ -156,7 +157,7 @@ describe('API Routes', () => {
           'tectonic': 'Subduction zone',
           'email':'papa@turing.io',
           'app': 'volcanoes',
-          'token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InBhcGFhQHR1cmluZy5pbyIsImFwcCI6InZvbGNhbm9lcyIsImlhdCI6MTUzMTQyODI5MX0.21wcefiQCWQ3Xt_HVLHMpUkNmVVAcJZeOuuR0J3QQMo'
+          'token': token
         })
         .end((err, response) => {
           response.should.have.status(201);
@@ -175,7 +176,7 @@ describe('API Routes', () => {
           'tectonic': 'Subduction zone',
           'email':'papa@turing.io',
           'app': 'volcanoes',
-          'token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InBhcGFhQHR1cmluZy5pbyIsImFwcCI6InZvbGNhbm9lcyIsImlhdCI6MTUzMTQyODI5MX0.21wcefiQCWQ3Xt_HVLHMpUkNmVVAcJZeOuuR0J3QQMo'
+          'token': token
         })
         .end((err, response) => {
           response.should.have.status(422);

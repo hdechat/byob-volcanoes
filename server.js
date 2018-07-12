@@ -1,6 +1,8 @@
+require('dotenv').config()
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
+const jwt = require('jsonwebtoken');
 
 const environment = process.env.NODE_ENV || 'development';
 const configuration = require('./knexfile')[environment];
@@ -8,6 +10,8 @@ const database = require('knex')(configuration);
 
 app.use(bodyParser.json());
 app.set('port', process.env.PORT || 3000);
+app.set('secretKey', process.env.secretKey);
+
 
 app.get('/api/v1/volcanoes', (request, response) => {
   database('volcanoes').select()
@@ -63,6 +67,21 @@ app.get('/api/v1/volcanoes/country/:country', (request, response) => {
     .catch(error => {
       response.status(500).json({ error });
     });
+});
+
+app.post('/api/v1/auth', (request, response) => {
+  const payload = {
+    email: request.body.email,
+    app: request.body.app
+  }
+
+  if (!payload.email || !payload.app) {
+    response.status(422).json({ error: "Both email and app name required" })
+  }
+
+  const secretKey = app.get('secretKey');
+  const jwtToken = jwt.sign(payload, secretKey);
+  response.status(201).send(jwtToken);
 });
 
 app.delete('/api/v1/volcanoes/:id', (request, response) => {

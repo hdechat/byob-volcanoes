@@ -12,6 +12,27 @@ app.use(bodyParser.json());
 app.set('port', process.env.PORT || 3000);
 app.set('secretKey', process.env.secretKey);
 
+const checkAuth = (request, response, next) => {
+  const { token, email } = request.body
+  if (!token) {
+    response.status(400).send('You must be authorized to access this endpoint.')
+  } else {
+    jwt.verify(token, app.get('secretKey'), (err, decoded) => {
+      if (err) {
+        response.status(403).send('Invalid token')
+      } else {
+          const adminCheck = request.body.email.slice(request.body.email
+            .search(/@/)).match(/@turing.io/)
+          console.log(adminCheck)
+          if (decoded.app === 'volcanoes' && adminCheck) {
+          next();
+        } else {
+          response.status(403).send('You do not have administrative access')
+        }
+      }
+    });
+  }
+};
 
 app.get('/api/v1/volcanoes', (request, response) => {
   database('volcanoes').select()
@@ -70,10 +91,7 @@ app.get('/api/v1/volcanoes/country/:country', (request, response) => {
 });
 
 app.post('/api/v1/auth', (request, response) => {
-  const payload = {
-    email: request.body.email,
-    app: request.body.app
-  }
+  const payload = request.body
 
   if (!payload.email || !payload.app) {
     response.status(422).json({ error: "Both email and app name required" })
@@ -84,7 +102,7 @@ app.post('/api/v1/auth', (request, response) => {
   response.status(201).send(jwtToken);
 });
 
-app.delete('/api/v1/volcanoes/:id', (request, response) => {
+app.delete('/api/v1/volcanoes/:id', checkAuth, (request, response) => {
   const { id } = request.params;
 
   database('volcanoes').where('id', id).select()

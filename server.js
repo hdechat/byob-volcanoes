@@ -89,7 +89,7 @@ app.put('/api/v1/volcanoes/:id', (request, response) => {
   for (let props of Object.keys(update)) {
     if (!['name', 'country', 'last_known_eruption', 'geological_info_id'].includes(props)) {
       return response.status(422).send({
-        error: `Invalid key. See README for valid PUT body instrucions`
+        error: 'Invalid key. See README for valid PUT body instructions'
       });
     }
   }
@@ -103,6 +103,20 @@ app.put('/api/v1/volcanoes/:id', (request, response) => {
           .json({ error: `Could not find project with id: ${id}`});
       }
     })
+    .catch(error => response.status(500).json({ error }));
+});
+
+app.post('/api/v1/volcanoes', (request, response) => {
+  const volcano = request.body;
+
+  if (!volcano.name || !volcano.country || !volcano.geological_info_id) {
+    return response.status(422).send({
+      error: 'Invalid entry. See README for valid POST body instructions'
+    });
+  }
+  
+  database('volcanoes').insert(volcano, 'id')
+    .then(volcanoId => response.status(201).json({ id: volcanoId[0] }))
     .catch(error => response.status(500).json({ error }));
 });
 

@@ -1,21 +1,27 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
+    <title>BYOB</title>
+    <style type="text/css">body,button,html{text-align:center}body,html{margin:50px;font-family:'Helvetica Neue'}button{border:0;background-color:rebeccapurple;text-transform:uppercase;color:#fff;padding:15px 30px;margin:0 auto}input{padding: 13px 30px;}.form-helper-text{font-family:'Garamond';padding:20px}.error{font-size:.7em;padding:5px;height:22px;}#jwt-container{border:1px solid #eee;font-family:'Garamond';padding:20px;margin:50px auto;overflow-wrap:break-word;width:400px;}</style>
     <meta charset='utf-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
     <meta http-equiv='X-UA-Compatible'>
-    <title>BYOB</title>
   </head>
   <body>
     <header>
-      Volcanoes ROCK! Submit your info below to receive a JWT.
+      <h1>Submit your info below to receive a JWT.</h1>
     </header>
-    <section>
-      <div>Email:</div>
-      <input type='text' placeholder='example@email.com' />
-      <div>Application name:</div>
-      <input type='text' />
-      <button type='submit'>Submit</button>
-    </section>
+    <form>
+      <div class='form-helper-text'>Email:</div>
+      <input id='user-email' type='text' placeholder='example@email.com' />
+      <div class='form-helper-text error'></div>
+      <div class='form-helper-text'>Application name:</div>
+      <input id='applicaiton-name'type='text' />
+      <div class='form-helper-text error'></div>
+      <button id='submit-jwt-request' type='submit'>Submit</button>
+    </form>
+      <div id='jwt-container'>
+        After submitting your request, your JWT will appear here.
+      </div>
   </body>
 </html>

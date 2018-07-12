@@ -21,8 +21,24 @@ describe('Client routes', () => {
 
 describe('API Routes', () => {
 
-  before(() => knex.migrate.latest());
-  beforeEach(() => knex.seed.run());
+  before((done) => {
+    knex.migrate.latest()
+      .then(() => done())
+      .catch(error => {
+        throw error;
+      })
+      .done();
+
+  });
+
+  beforeEach((done) => {
+    knex.seed.run()
+      .then(() => done())
+      .catch(error => {
+        throw error;
+      })
+      .done();
+  });
 
   describe('GET /api/v1/volcanoes', () => {
     it('should return all the volcanoes', done => {
@@ -61,8 +77,8 @@ describe('API Routes', () => {
           response.body.geoInfo[0].rock_type.should.equal('basalt');
           response.body.geoInfo[0].should.have.property('tectonic');
           response.body.geoInfo[0].tectonic.should.equal('rift zone');
+          done();
         });
-      done();
     });
   });
 
@@ -80,8 +96,8 @@ describe('API Routes', () => {
           response.body.country.should.equal('Italy');
           response.body.should.have.property('geoInfo');
           response.body.geoInfo.should.be.a('object');
+          done();
         });
-      done();
     });
 
     it('should return status 404 with message if given an unlisted volcano name as parameter', done => {
@@ -89,8 +105,8 @@ describe('API Routes', () => {
         .get('/api/v1/volcanoes/Kaboom')
         .end((err, response) => {
           response.should.have.status(404);
+          done();
         });
-      done();
     });
   });
 
@@ -104,21 +120,25 @@ describe('API Routes', () => {
           response.body.should.be.a('array');
           response.body[0].should.have.property('name');
           response.body[0].name.should.equal('Vesuvius');
+          done();
         });
-      done();
     });
   });
 
-//DUMMY BLOCK TO WORK AROUND MOCHA/CHAI BUG (LAST BLOCK WILL PASS EVEN WHEN IT SHOULDN'T)
-describe('GET /api/v1/volcanoes/:name', () => {
-    it('should return all the information for volcano name given as the parameter', done => {
+  describe('POST /api/v1/volcanoes', () => {
+    it('should not create a new volcano if not given all the required information', done => {
       chai.request(server)
-        .get('/api/v1/volcanoes/Vesuvius')
+        .post('/api/v1/volcanoes')
+        .send({
+          name: 'Kablamo',
+          country: 'Ork',
+        })
         .end((err, response) => {
-          response.should.have.status(200);
-          response.should.be.json;
+          response.should.have.status(422);
+          response.body.should.be.a('object');
+          response.body.should.have.property('error');
+          done();
         });
-      done();
     });
   });
 });

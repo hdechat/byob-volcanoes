@@ -65,6 +65,61 @@ app.get('/api/v1/volcanoes/country/:country', (request, response) => {
     });
 });
 
+app.delete('/api/v1/volcanoes/:id', (request, response) => {
+  const { id } = request.params;
+
+  database('volcanoes').where('id', id).select()
+    .then(volcano => {
+      if (!volcano.length) {
+        response.status(404)
+          .json({ error: `Could not find project with id: ${id}` });
+      } else {
+        database('volcanoes').where('id', id).delete()
+          .then(() => response.sendStatus(204))
+          .catch(error => response.status(500).json({ error }));
+      }
+    })
+    .catch(error => response.status(500).json({ error }));
+});
+
+app.put('/api/v1/volcanoes/:id', (request, response) => {
+  const { id } = request.params;
+  const update = request.body;
+
+  for (let props of Object.keys(update)) {
+    if (!['name', 'country', 'last_known_eruption', 'geological_info_id'].includes(props)) {
+      return response.status(422).send({
+        error: 'Invalid key. See README for valid PUT body instructions'
+      });
+    }
+  }
+
+  database('volcanoes').where('id', id).update(update)
+    .then(volcano => {
+      if (volcano) {
+        response.status(200).json(update);
+      } else {
+        response.status(404)
+          .json({ error: `Could not find project with id: ${id}`});
+      }
+    })
+    .catch(error => response.status(500).json({ error }));
+});
+
+app.post('/api/v1/volcanoes', (request, response) => {
+  const volcano = request.body;
+
+  if (!volcano.name || !volcano.country || !volcano.geological_info_id) {
+    return response.status(422).send({
+      error: 'Invalid entry. See README for valid POST body instructions'
+    });
+  }
+  
+  database('volcanoes').insert(volcano, 'id')
+    .then(volcanoId => response.status(201).json({ id: volcanoId[0] }))
+    .catch(error => response.status(500).json({ error }));
+});
+
 app.listen(app.get('port'), () => {
   console.log(`Sever is running on ${app.get('port')}.`);
 });

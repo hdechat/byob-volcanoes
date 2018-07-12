@@ -86,10 +86,18 @@ app.put('/api/v1/volcanoes/:id', (request, response) => {
   const { id } = request.params;
   const update = request.body;
 
+  for (let props of Object.keys(update)) {
+    if (!['name', 'country', 'last_known_eruption', 'geological_info_id'].includes(props)) {
+      return response.status(422).send({
+        error: `Invalid key. See README for valid PUT body instrucions`
+      });
+    }
+  }
+
   database('volcanoes').where('id', id).update(update)
     .then(volcano => {
       if (volcano) {
-        response.status(200).json(request.body);
+        response.status(200).json(update);
       } else {
         response.status(404)
           .json({ error: `Could not find project with id: ${id}`});

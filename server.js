@@ -65,6 +65,22 @@ app.get('/api/v1/volcanoes/country/:country', (request, response) => {
     });
 });
 
+app.delete('/api/v1/volcanoes/:id', (request, response) => {
+  const { id } = request.params;
+
+  database('volcanoes').where('id', id).select()
+    .then(volcano => {
+      if (!volcano.length) {
+        response.status(404).json({ error: `Could not find project with id: ${id}` });
+      } else {
+        database('volcanoes').where('id', id).delete()
+          .then(() => response.sendStatus(204))
+          .catch(error => response.status(500).json({ error }));
+      }
+    })
+    .catch(error => response.status(500).json({ error }));
+});
+
 app.listen(app.get('port'), () => {
   console.log(`Sever is running on ${app.get('port')}.`);
 });

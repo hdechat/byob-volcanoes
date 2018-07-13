@@ -39,13 +39,28 @@ app.get('/', (request, response) => {
 });
 
 app.get('/api/v1/volcanoes', (request, response) => {
-  database('volcanoes').select()
-    .then(volcanoes => {
-      response.status(200).json({ volcanoes });
-    })
-    .catch(error => {
-      response.status(500).json({ error });
-    });
+  const year = request.query.year;
+
+  if (!year) {
+    database('volcanoes').select()
+      .then(volcanoes => {
+        response.status(200).json({ volcanoes });
+      })
+      .catch(error => {
+        response.status(500).json({ error });
+      });
+  } else {
+    database('volcanoes').select()
+      .then(volcanoes => {
+        const filteredVolcanoes = volcanoes.filter(volcano => {
+          return volcano.last_known_eruption.includes(year);
+        });
+        response.status(200).json({ filteredVolcanoes });
+      })
+      .catch(error => {
+        response.status(500).json({ error });
+      });
+  }
 });
 
 app.get('/api/v1/geo-info', (request, response) => {

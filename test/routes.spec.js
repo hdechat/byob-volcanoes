@@ -138,6 +138,17 @@ describe('API Routes', () => {
           done();
         });
     });
+
+    it('should return 404 if country not found', done => {
+      chai.request(server)
+        .get('/api/v1/volcanoes/country/United States of America')
+        .end((err, response) => {
+          response.should.have.status(404);
+          response.res.text.should.equal('No volcanoes listed '+
+          'for that country');
+          done();
+        });
+    });
   });
 
   describe('POST /api/v1/volcanoes', () => {

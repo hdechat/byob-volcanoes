@@ -15,7 +15,7 @@ app.set('port', process.env.PORT || 3000);
 app.set('secretKey', process.env.secretKey);
 
 const checkAuth = (request, response, next) => {
-  if (process.env.NODE_ENV === 'development') {
+  // if (process.env.NODE_ENV === 'development') {
     const { token, email } = request.body;
     if (!token) {
       response.status(400)
@@ -35,9 +35,9 @@ const checkAuth = (request, response, next) => {
         }
       });
     }
-  } else {
-    next();
-  }
+  // } else {
+    // next();
+  // }
 };
 
 app.get('/', (request, response) => {

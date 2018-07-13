@@ -11,7 +11,16 @@ const token = process.env.token;
 
 chai.use(chaiHttp);
 
-describe.skip('Client routes', () => {
+describe('Client routes', () => {
+  it('should return status 200', done => {
+    chai.request(server)
+      .get('/')
+      .end((err, response) => {
+        response.should.have.status(200);
+        done();
+      });
+  });
+
   it('should return 404 with bad url', done => {
     chai.request(server)
       .get('/api/v1/badpath')

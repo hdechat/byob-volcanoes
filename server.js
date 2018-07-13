@@ -36,7 +36,6 @@ const checkAuth = (request, response, next) => {
       });
     }
   } else {
-    console.log('hi')
     next();
   }
 };
@@ -125,7 +124,7 @@ app.post('/api/v1/auth', (request, response) => {
 
   const secretKey = app.get('secretKey');
   const jwtToken = jwt.sign(payload, secretKey);
-  response.status(201).send(jwtToken);
+  response.status(201).json(jwtToken);
 });
 
 app.delete('/api/v1/volcanoes/:id', checkAuth, (request, response) => {
@@ -202,18 +201,17 @@ const verifyPostBody = (request, response, next) => {
   }
 };
 
-app.post('/api/v1/geo-info', checkAuth, verifyPostBody, (request, response, next) => {
+app.post('/api/v1/geo-info', checkAuth, verifyPostBody, (request, response) => {
   const geoInfo = deleteSensitiveInfo(request.body);
-  const { volcano_type, rock_type, tectonic } = geoInfo
+  const { volcano_type, rock_type, tectonic } = geoInfo;
 
-
-    database('geological_info').insert(geoInfo, 'id')
-      .then(geoInfoId => {
-        response.status(201).json({volcano_type, rock_type, tectonic});
-      })
-      .catch(error => {
-        response.status(500).json(error);
-      });
+  database('geological_info').insert(geoInfo, 'id')
+    .then(() => {
+      response.status(201).json({volcano_type, rock_type, tectonic});
+    })
+    .catch(error => {
+      response.status(500).json(error);
+    });
 
 });
 

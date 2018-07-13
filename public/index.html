@@ -18,6 +18,8 @@
       <input id='applicaiton-name'type='text' />
       <div></div>
       <button id='submit-jwt-request' type='submit'>Submit</button>
+      <div class='form-helper-text'>Your Token:</div>
+      <div id='received-token' type="text"></div>
     </form>
   </body>
   <script type='text/javascript'>
@@ -41,11 +43,16 @@
               app: appName
             })
           })
-          .then(res => console.log(res))
-          .catch(error => console.log(error));
+          .then(res => res.json())
+          .catch(error => console.log(error))
+          .then(token => {
+            document.getElementById('received-token').innerText = token;
+          })
         }
       });
     };
+
+
 
   initApp();
   </script>

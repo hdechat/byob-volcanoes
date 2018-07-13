@@ -358,7 +358,6 @@ describe('API Routes', () => {
           "app": 'volcanoes',
         })
         .end((err, response) => {
-          console.log(response.locals)
           response.should.have.status(200);
           response.should.be.json;
           response.body.should.be.a('object');

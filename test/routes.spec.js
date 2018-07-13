@@ -24,24 +24,21 @@ describe('Client routes', () => {
 
 describe('API Routes', () => {
 
-  before((done) => {
-    knex.migrate.latest()
-      .then(() => done())
-      .catch(error => {
-        throw error;
-      })
-      .done();
-
-  });
-
   beforeEach((done) => {
-    knex.seed.run()
-      .then(() => done())
-      .catch(error => {
+    knex.migrate.rollback()
+      .then(() => {
+        knex.migrate.latest()
+          .then(() => {
+            return knex.seed.run()
+              .then(() => {
+                done();
+              });
+          });
+      }).catch(error => {
         throw error;
-      })
-      .done();
+      });
   });
+
 
   describe('GET /api/v1/volcanoes', () => {
     it('should return all the volcanoes', done => {

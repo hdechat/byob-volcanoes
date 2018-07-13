@@ -160,6 +160,29 @@ describe('API Routes', () => {
     });
   });
 
+  describe('DELETE /api/v1/volcanoes/:id', () => {
+    it('should return status 204', done => {
+      chai.request(server)
+        .delete('/api/v1/volcanoes/1')
+        .end((err, response) => {
+          response.should.have.status(204);
+          done();
+        });
+    });
+
+    it('should return status 404 when item to delete is not found', done => {
+      chai.request(server)
+        .delete('/api/v1/volcanoes/8')
+        .end((err, response) => {
+          response.should.have.status(404);
+          response.should.be.json;
+          response.res.text.should
+            .equal('{"error":"Could not find project with id: 8"}');
+          done();
+        });
+    });
+  });
+
   describe('POST /api/v1/geo-info', () => {
     it('should return new post item id', done => {
       chai.request(server)

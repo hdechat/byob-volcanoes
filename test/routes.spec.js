@@ -1,3 +1,5 @@
+process.env.NODE_ENV = 'test'
+
 const chai = require('chai');
 // eslint-disable-next-line no-unused-vars
 const should = chai.should();

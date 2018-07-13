@@ -1,4 +1,4 @@
-const token = require('./token');
+require('dotenv').config();
 const chai = require('chai');
 // eslint-disable-next-line no-unused-vars
 const should = chai.should();
@@ -7,6 +7,7 @@ const server = require('../server');
 
 const configuration = require('../knexfile')['test'];
 const knex = require('knex')(configuration);
+const token = process.env.token;
 
 chai.use(chaiHttp);
 

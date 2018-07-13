@@ -1,6 +1,8 @@
+require('dotenv').config();
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
+const jwt = require('jsonwebtoken');
 
 const environment = process.env.NODE_ENV || 'development';
 const configuration = require('./knexfile')[environment];
@@ -8,6 +10,29 @@ const database = require('knex')(configuration);
 
 app.use(bodyParser.json());
 app.set('port', process.env.PORT || 3000);
+app.set('secretKey', process.env.secretKey);
+
+const checkAuth = (request, response, next) => {
+  const { token, email } = request.body;
+  if (!token) {
+    response.status(400)
+      .send('You must be authorized to access this endpoint.');
+  } else {
+    jwt.verify(token, app.get('secretKey'), (err, decoded) => {
+      if (err) {
+        response.status(403).send('Invalid token');
+      } else {
+        const adminCheck = email.slice(email
+          .search(/@/)).match(/@turing.io/);
+        if (decoded.app === 'volcanoes' && adminCheck) {
+          next();
+        } else {
+          response.status(403).send('You do not have administrative access');
+        }
+      }
+    });
+  }
+};
 
 app.get('/api/v1/volcanoes', (request, response) => {
   database('volcanoes').select()
@@ -65,7 +90,19 @@ app.get('/api/v1/volcanoes/country/:country', (request, response) => {
     });
 });
 
-app.delete('/api/v1/volcanoes/:id', (request, response) => {
+app.post('/api/v1/auth', (request, response) => {
+  const payload = request.body;
+
+  if (!payload.email || !payload.app) {
+    response.status(422).json({ error: "Both email and app name required" });
+  }
+
+  const secretKey = app.get('secretKey');
+  const jwtToken = jwt.sign(payload, secretKey);
+  response.status(201).send(jwtToken);
+});
+
+app.delete('/api/v1/volcanoes/:id', checkAuth, (request, response) => {
   const { id } = request.params;
 
   database('volcanoes').where('id', id).select()
@@ -82,9 +119,16 @@ app.delete('/api/v1/volcanoes/:id', (request, response) => {
     .catch(error => response.status(500).json({ error }));
 });
 
-app.put('/api/v1/volcanoes/:id', (request, response) => {
+const deleteSensitiveInfo = (payload) => {
+  delete payload['email'];
+  delete payload['app'];
+  delete payload['token'];
+  return payload;
+};
+
+app.put('/api/v1/volcanoes/:id', checkAuth, (request, response) => {
+  const update = deleteSensitiveInfo(request.body);
   const { id } = request.params;
-  const update = request.body;
 
   for (let props of Object.keys(update)) {
     if (!['name', 'country', 'last_known_eruption', 'geological_info_id']
@@ -107,8 +151,8 @@ app.put('/api/v1/volcanoes/:id', (request, response) => {
     .catch(error => response.status(500).json({ error }));
 });
 
-app.post('/api/v1/volcanoes', (request, response) => {
-  const volcano = request.body;
+app.post('/api/v1/volcanoes', checkAuth, (request, response) => {
+  const volcano = deleteSensitiveInfo(request.body);
 
   if (!volcano.name || !volcano.country || !volcano.geological_info_id) {
     return response.status(422).send({
@@ -132,8 +176,8 @@ const verifyPostBody = (request, response, next) => {
   }
 };
 
-app.post('/api/v1/geo-info', verifyPostBody, (request, response) => {
-  const geoInfo = request.body;
+app.post('/api/v1/geo-info', checkAuth, verifyPostBody, (request, response) => {
+  const geoInfo = deleteSensitiveInfo(request.body);
 
   database('geological_info').insert(geoInfo, 'id')
     .then(geoInfoId => {
@@ -160,8 +204,8 @@ const verifyKeys = (request, response, next) => {
     });
 };
 
-app.patch('/api/v1/geo-info/:id', verifyKeys, (request, response) => {
-  const geoInfo = request.body;
+app.patch('/api/v1/geo-info/:id', checkAuth, verifyKeys, (request, response) => {
+  const geoInfo = deleteSensitiveInfo(request.body);
   const { id } = request.params;
 
   database('geological_info').where('id', id).select().update(geoInfo)
@@ -189,8 +233,7 @@ const verifyDelete = (request, response, next) => {
     });
 };
 
-
-app.delete('/api/v1/geo-info/:id', verifyDelete, (request, response) => {
+app.delete('/api/v1/geo-info/:id', checkAuth, verifyDelete, (request, response) => {
   const { id } = request.params;
   let deletedVolcanoes = [];
 

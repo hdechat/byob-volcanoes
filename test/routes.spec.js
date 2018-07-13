@@ -1,3 +1,4 @@
+require('dotenv').config();
 const chai = require('chai');
 // eslint-disable-next-line no-unused-vars
 const should = chai.should();
@@ -6,6 +7,7 @@ const server = require('../server');
 
 const configuration = require('../knexfile')['test'];
 const knex = require('knex')(configuration);
+const token = process.env.token;
 
 chai.use(chaiHttp);
 
@@ -132,7 +134,10 @@ describe('API Routes', () => {
         .post('/api/v1/volcanoes')
         .send({
           name: 'Kablamo',
-          country: 'Ork',
+          bicycles: 'Ork',
+          email:'papa@turing.io',
+          app: 'volcanoes',
+          token: token
         })
         .end((err, response) => {
           response.should.have.status(422);
@@ -150,13 +155,16 @@ describe('API Routes', () => {
         .send({
           'volcano_type': 'Stratovolcano',
           'rock_type':'Adesite',
-          'tectonic': 'Subduction zone'
+          'tectonic': 'Subduction zone',
+          'email':'papa@turing.io',
+          'app': 'volcanoes',
+          'token': token
         })
         .end((err, response) => {
           response.should.have.status(201);
           response.should.be.json;
           response.body.should.be.a('array');
-          response.body[0].should.equal(2);
+          response.body.length.should.equal(1);
           done();
         });
     });
@@ -166,7 +174,10 @@ describe('API Routes', () => {
         .post('/api/v1/geo-info')
         .send({
           'rock_type':'Adesite',
-          'tectonic': 'Subduction zone'
+          'tectonic': 'Subduction zone',
+          'email':'papa@turing.io',
+          'app': 'volcanoes',
+          'token': token
         })
         .end((err, response) => {
           response.should.have.status(422);

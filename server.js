@@ -117,13 +117,9 @@ app.get('/api/v1/volcanoes/country/:country', (request, response) => {
 
 app.post('/api/v1/auth', (request, response) => {
   const payload = request.body;
-
-  if (!payload.email || !payload.app) {
-    response.status(422).json({ error: "Both email and app name required" });
-  }
-
   const secretKey = app.get('secretKey');
   const jwtToken = jwt.sign(payload, secretKey);
+  
   response.status(201).json(jwtToken);
 });
 

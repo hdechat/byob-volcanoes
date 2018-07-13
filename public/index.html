@@ -31,7 +31,6 @@
 
         const email = document.getElementById('user-email').value;
         const appName = document.getElementById('applicaiton-name').value;
-
         if (email && appName) {
           fetch('/api/v1/auth', {
             method: 'POST',

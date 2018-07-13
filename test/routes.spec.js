@@ -1,3 +1,4 @@
+require('dotenv').config();
 const chai = require('chai');
 // eslint-disable-next-line no-unused-vars
 const should = chai.should();
@@ -7,6 +8,7 @@ const server = require('../server');
 const environment = process.env.NODE_ENV || 'test';
 const configuration = require('../knexfile')[environment];
 const knex = require('knex')(configuration);
+const token = process.env.token;
 
 chai.use(chaiHttp);
 
@@ -127,6 +129,7 @@ describe('API Routes', () => {
           'country': 'Guatemala',
           'email':'papa@turing.io',
           'app': 'volcanoes',
+          'token': token
         })
         .end((err, response) => {
           response.should.have.status(200);
@@ -148,6 +151,7 @@ describe('API Routes', () => {
           'country': 'Guatemala',
           'email':'papa@turing.io',
           'app': 'volcanoes',
+          'token': token
         })
         .end((err, response) => {
           response.should.have.status(404);
@@ -192,7 +196,8 @@ describe('API Routes', () => {
           name: 'Kablamo',
           bicycles: 'Ork',
           email:'papa@turing.io',
-          app: 'volcanoes'
+          app: 'volcanoes',
+          'token': token
         })
         .end((err, response) => {
           response.should.have.status(422);
@@ -211,6 +216,7 @@ describe('API Routes', () => {
           "geological_info_id": 1,
           "email":'papa@turing.io',
           "app": 'volcanoes',
+          'token': token
 
         })
         .end((err, response) => {
@@ -229,6 +235,7 @@ describe('API Routes', () => {
         .send({
           "email":'papa@turing.io',
           "app": 'volcanoes',
+          'token': token
         })
         .end((err, response) => {
           response.should.have.status(204);
@@ -242,6 +249,7 @@ describe('API Routes', () => {
         .send({
           "email":'papa@turing.io',
           "app": 'volcanoes',
+          'token': token
         })
         .end((err, response) => {
           response.should.have.status(404);
@@ -285,6 +293,7 @@ describe('API Routes', () => {
           'tectonic': 'Subduction zone',
           'email':'papa@turing.io',
           'app': 'volcanoes',
+          'token': token
         })
         .end((err, response) => {
           response.should.have.status(201);
@@ -302,6 +311,7 @@ describe('API Routes', () => {
           'tectonic': 'Subduction zone',
           'email':'papa@turing.io',
           'app': 'volcanoes',
+          'token': token
         })
         .end((err, response) => {
           response.should.have.status(422);
@@ -319,6 +329,7 @@ describe('API Routes', () => {
           "rock_type": 'Andesite',
           "email":'papa@turing.io',
           "app": 'volcanoes',
+          'token': token
         })
         .end((err, response) => {
           response.should.have.status(200);
@@ -340,6 +351,7 @@ describe('API Routes', () => {
           "rock_type": 'Andesite',
           "email":'papa@turing.io',
           "app": 'volcanoes',
+          'token': token
         })
         .end((err, response) => {
           response.should.have.status(422);
@@ -356,6 +368,7 @@ describe('API Routes', () => {
         .send({
           "email":'papa@turing.io',
           "app": 'volcanoes',
+          'token': token
         })
         .end((err, response) => {
           response.should.have.status(200);
@@ -375,6 +388,7 @@ describe('API Routes', () => {
         .send({
           "email":'papa@turing.io',
           "app": 'volcanoes',
+          'token': token
         })
         .end((err, response) => {
           response.should.have.status(400);

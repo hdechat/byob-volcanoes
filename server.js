@@ -15,11 +15,12 @@ app.set('port', process.env.PORT || 3000);
 app.set('secretKey', process.env.secretKey);
 
 const checkAuth = (request, response, next) => {
-  // if (process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV === 'development') {
     const { token, email } = request.body;
     if (!token) {
       response.status(400)
-        .send('You must include an authentication token to access this endpoint. To receive a token visit api/v1/auth');
+        .send('You must include an authentication token to access this' +
+        ' endpoint. To receive a token visit api/v1/auth');
     } else {
       jwt.verify(token, app.get('secretKey'), (err, decoded) => {
         if (err) {
@@ -35,9 +36,9 @@ const checkAuth = (request, response, next) => {
         }
       });
     }
-  // } else {
-    // next();
-  // }
+  } else {
+    next();
+  }
 };
 
 app.get('/', (request, response) => {
@@ -119,7 +120,7 @@ app.post('/api/v1/auth', (request, response) => {
   const payload = request.body;
   const secretKey = app.get('secretKey');
   const jwtToken = jwt.sign(payload, secretKey);
-  
+
   response.status(201).json(jwtToken);
 });
 

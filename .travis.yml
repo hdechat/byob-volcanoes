@@ -1,9 +1,16 @@
 language: node_js
 node_js:
-  - "node"
+- node
 services:
-  - postgresql
+- postgresql
 before_script:
-  - psql -c 'CREATE DATABASE travis_test;' -U postgres
+- psql -c 'CREATE DATABASE travis_test;' -U postgres
 notifications:
   email: false
+deploy:
+  provider: heroku
+  api_key:
+    secure: CsKhG7tHLimkVi046ASUmibLTdxh/9SQiGVOozojd8LZzGrMgYBWD3iubLdzBdmQNEjINij9s0k8Ptdv0VZvVNMt5Ds0adB5e5fp41WPhczJknRdWuzQKlj5xS0Fa/kf+AARhjU8Fw4vZ1kxcZADV6svO0lmLx9Tp9en9M/6j3MjqQhz50aXIXV8EL5YqLlKfdEjOdL0o0yUnwSY3XeRfhLUcZ/onN6zktKtwKVWdta/TEAoGK4D1gxLKWc0f9qMb/Qsg91twrmewYR0AXp/QlVNaxQ3x2erusuOlskEWcuKJWYZ+VDGx+/+r1f1Co+RQ2cXU53dVHJhy54FH1HUOyRxHx4SCurovKtn/r2DCBK/Hid3YTKWWpO3pP1FoMX4677i8gMUpwQaNKwrF2sDJXDuTf/3tCqDuKY1GQcCmohiXIt0ftfRZoWWgo5gC4mmtnltLLfo42Q0msQNPzpW+IqW555c+0NaK19JK1e9STFFJTrCPfbPaWP8j0G+brPMyVnDNIzYwsScd6WtDRe/B1+ZPaiL9j+anX2lMLcDXlqgHA5ftwLhRoKHzfnUSHwZcJb78XkFpPN1lMLSTGqsXjyX57Dw9UZE5bzNfZBSz3xrqPTHs0RcTzb3LbV9b1k6sDln5B8xWwQWeDRnMw7Fhf9Y84ngedkZcBqMAtIo/5I=
+  app: byob-volcanoes-krishel
+  skip_cleanup: true
+

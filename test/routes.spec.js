@@ -68,6 +68,26 @@ describe('API Routes', () => {
           done();
         });
     });
+
+    it('should return all the volcanoes that erupted in the year given as param', done => {
+      chai.request(server)
+        .get('/api/v1/volcanoes/')
+        .query({ year: '4040'})
+        .end((err, response) => {
+          response.should.have.status(200);
+          response.should.be.json;
+          response.body.should.be.a('object');
+          response.body.filteredVolcanoes[0].should.have.property('name');
+          response.body.filteredVolcanoes[0].name.should.equal('Maar');
+          response.body.filteredVolcanoes[0].should.have.property('country');
+          response.body.filteredVolcanoes[0].country.should.equal('Germany');
+          response.body.filteredVolcanoes[0].should.have.property('last_known_eruption');
+          response.body.filteredVolcanoes[0].last_known_eruption.should.equal('4040 CE');
+          response.body.filteredVolcanoes[0].should.have.property('geological_info_id');
+          response.body.filteredVolcanoes[0].geological_info_id.should.equal(1);
+          done();
+        });
+    });
   });
 
   describe('GET /api/v1/volcanoes/:name', () => {
@@ -103,8 +123,11 @@ describe('API Routes', () => {
       chai.request(server)
         .put('/api/v1/volcanoes/1')
         .send({
-          name: 'Agua',
-          country: 'Guatemala'
+          'name': 'Agua',
+          'country': 'Guatemala',
+          'email':'papa@turing.io',
+          'app': 'volcanoes',
+          'token': token
         })
         .end((err, response) => {
           response.should.have.status(200);
@@ -122,8 +145,11 @@ describe('API Routes', () => {
       chai.request(server)
         .put('/api/v1/volcanoes/7')
         .send({
-          name: 'Agua',
-          country: 'Guatemala'
+          'name': 'Agua',
+          'country': 'Guatemala',
+          'email':'papa@turing.io',
+          'app': 'volcanoes',
+          'token': token
         })
         .end((err, response) => {
           response.should.have.status(404);
@@ -179,15 +205,17 @@ describe('API Routes', () => {
         });
     });
 
-
-    //check this return
     it('should return new post item id', done => {
       chai.request(server)
         .post('/api/v1/volcanoes')
         .send({
           "name": "Agua",
           "country":"Guatemala",
-          "geological_info_id": 1
+          "geological_info_id": 1,
+          "email":'papa@turing.io',
+          "app": 'volcanoes',
+          "token": token
+
         })
         .end((err, response) => {
           response.should.have.status(201);
@@ -202,6 +230,11 @@ describe('API Routes', () => {
     it('should return status 204', done => {
       chai.request(server)
         .delete('/api/v1/volcanoes/1')
+        .send({
+          "email":'papa@turing.io',
+          "app": 'volcanoes',
+          "token": token
+        })
         .end((err, response) => {
           response.should.have.status(204);
           done();
@@ -211,6 +244,11 @@ describe('API Routes', () => {
     it('should return status 404 when item to delete is not found', done => {
       chai.request(server)
         .delete('/api/v1/volcanoes/8')
+        .send({
+          "email":'papa@turing.io',
+          "app": 'volcanoes',
+          "token": token
+        })
         .end((err, response) => {
           response.should.have.status(404);
           response.should.be.json;
@@ -219,6 +257,8 @@ describe('API Routes', () => {
           done();
         });
     });
+
+    
   });
 
   describe('GET /api/v1/geo-info', () => {
@@ -285,7 +325,10 @@ describe('API Routes', () => {
       chai.request(server)
         .patch('/api/v1/geo-info/1')
         .send({
-          'rock_type': 'Andesite'
+          "rock_type": 'Andesite',
+          "email":'papa@turing.io',
+          "app": 'volcanoes',
+          "token": token
         })
         .end((err, response) => {
           response.should.have.status(200);
@@ -304,7 +347,10 @@ describe('API Routes', () => {
       chai.request(server)
         .patch('/api/v1/geo-info/9')
         .send({
-          'rock_type': 'Andesite'
+          "rock_type": 'Andesite',
+          "email":'papa@turing.io',
+          "app": 'volcanoes',
+          "token": token
         })
         .end((err, response) => {
           response.should.have.status(422);
@@ -319,6 +365,11 @@ describe('API Routes', () => {
     it('should return deleted item and all relational items', done => {
       chai.request(server)
         .delete('/api/v1/geo-info/1')
+        .send({
+          "email":'papa@turing.io',
+          "app": 'volcanoes',
+          "token": token
+        })
         .end((err, response) => {
           response.should.have.status(200);
           response.should.be.json;
@@ -334,6 +385,11 @@ describe('API Routes', () => {
     it('should return status 400 when item to delete is not found', done => {
       chai.request(server)
         .delete('/api/v1/geo-info/6')
+        .send({
+          "email":'papa@turing.io',
+          "app": 'volcanoes',
+          "token": token
+        })
         .end((err, response) => {
           response.should.have.status(400);
           response.res.text.should

@@ -16,7 +16,7 @@ const checkAuth = (request, response, next) => {
   const { token, email } = request.body;
   if (!token) {
     response.status(400)
-      .send('You must be authorized to access this endpoint.');
+      .send('You must include an authentication token to access this endpoint. To receive a token visit api/v1/auth');
   } else {
     jwt.verify(token, app.get('secretKey'), (err, decoded) => {
       if (err) {
@@ -27,7 +27,7 @@ const checkAuth = (request, response, next) => {
         if (decoded.app === 'volcanoes' && adminCheck) {
           next();
         } else {
-          response.status(403).send('You do not have administrative access');
+          response.status(401).send('You do not have administrative access');
         }
       }
     });
@@ -39,13 +39,28 @@ app.get('/', (request, response) => {
 });
 
 app.get('/api/v1/volcanoes', (request, response) => {
-  database('volcanoes').select()
-    .then(volcanoes => {
-      response.status(200).json({ volcanoes });
-    })
-    .catch(error => {
-      response.status(500).json({ error });
-    });
+  const year = request.query.year;
+
+  if (!year) {
+    database('volcanoes').select()
+      .then(volcanoes => {
+        response.status(200).json({ volcanoes });
+      })
+      .catch(error => {
+        response.status(500).json({ error });
+      });
+  } else {
+    database('volcanoes').select()
+      .then(volcanoes => {
+        const filteredVolcanoes = volcanoes.filter(volcano => {
+          return volcano.last_known_eruption.includes(year);
+        });
+        response.status(200).json({ filteredVolcanoes });
+      })
+      .catch(error => {
+        response.status(500).json({ error });
+      });
+  }
 });
 
 app.get('/api/v1/geo-info', (request, response) => {

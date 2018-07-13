@@ -71,22 +71,22 @@ describe('API Routes', () => {
 
     it('should return all the volcanoes that erupted in the year given as param', done => {
       chai.request(server)
-      .get('/api/v1/volcanoes/')
-      .query({ year: '4040'})
-      .end((err, response) => {
-        response.should.have.status(200);
-        response.should.be.json;
-        response.body.should.be.a('object');
-        response.body.filteredVolcanoes[0].should.have.property('name');
-        response.body.filteredVolcanoes[0].name.should.equal('Maar');
-        response.body.filteredVolcanoes[0].should.have.property('country');
-        response.body.filteredVolcanoes[0].country.should.equal('Germany');
-        response.body.filteredVolcanoes[0].should.have.property('last_known_eruption');
-        response.body.filteredVolcanoes[0].last_known_eruption.should.equal('4040 CE')
-        response.body.filteredVolcanoes[0].should.have.property('geological_info_id');
-        response.body.filteredVolcanoes[0].geological_info_id.should.equal(1)
-        done();
-      });
+        .get('/api/v1/volcanoes/')
+        .query({ year: '4040'})
+        .end((err, response) => {
+          response.should.have.status(200);
+          response.should.be.json;
+          response.body.should.be.a('object');
+          response.body.filteredVolcanoes[0].should.have.property('name');
+          response.body.filteredVolcanoes[0].name.should.equal('Maar');
+          response.body.filteredVolcanoes[0].should.have.property('country');
+          response.body.filteredVolcanoes[0].country.should.equal('Germany');
+          response.body.filteredVolcanoes[0].should.have.property('last_known_eruption');
+          response.body.filteredVolcanoes[0].last_known_eruption.should.equal('4040 CE');
+          response.body.filteredVolcanoes[0].should.have.property('geological_info_id');
+          response.body.filteredVolcanoes[0].geological_info_id.should.equal(1);
+          done();
+        });
     });
   });
 

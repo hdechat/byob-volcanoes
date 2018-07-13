@@ -34,6 +34,10 @@ const checkAuth = (request, response, next) => {
   }
 };
 
+app.get('/', (request, response) => {
+  response.send('Success');
+});
+
 app.get('/api/v1/volcanoes', (request, response) => {
   database('volcanoes').select()
     .then(volcanoes => {

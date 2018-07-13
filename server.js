@@ -194,12 +194,14 @@ const verifyKeys = (request, response, next) => {
 
   database('geological_info').where('id', id).select()
     .then(returnedInfo => {
-      const hasKeys = Object.keys(geoInfo)
-        .find(key => Object.keys(returnedInfo[0]).includes(key));
-      if (hasKeys) {
-        next();
+      if (returnedInfo.length) {
+        const hasKeys = Object.keys(geoInfo)
+          .find(key => Object.keys(returnedInfo[0]).includes(key));
+        if (hasKeys) {
+          next();
+        }
       } else {
-        response.status(422).send('Please provide valide key/value to update');
+        response.status(422).send('Please provide valid key/value to update');
       }
     });
 };

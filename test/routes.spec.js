@@ -1,17 +1,17 @@
-require('dotenv').config();
 const chai = require('chai');
 // eslint-disable-next-line no-unused-vars
 const should = chai.should();
 const chaiHttp = require('chai-http');
 const server = require('../server');
 
-const configuration = require('../knexfile')['test'];
+const environment = process.env.NODE_ENV || 'test';
+const configuration = require('../knexfile')[environment];
 const knex = require('knex')(configuration);
-const token = process.env.token;
 
 chai.use(chaiHttp);
 
 describe('Client routes', () => {
+
   it('should return status 200', done => {
     chai.request(server)
       .get('/')
@@ -127,7 +127,6 @@ describe('API Routes', () => {
           'country': 'Guatemala',
           'email':'papa@turing.io',
           'app': 'volcanoes',
-          'token': token
         })
         .end((err, response) => {
           response.should.have.status(200);
@@ -149,7 +148,6 @@ describe('API Routes', () => {
           'country': 'Guatemala',
           'email':'papa@turing.io',
           'app': 'volcanoes',
-          'token': token
         })
         .end((err, response) => {
           response.should.have.status(404);
@@ -194,8 +192,7 @@ describe('API Routes', () => {
           name: 'Kablamo',
           bicycles: 'Ork',
           email:'papa@turing.io',
-          app: 'volcanoes',
-          token: token
+          app: 'volcanoes'
         })
         .end((err, response) => {
           response.should.have.status(422);
@@ -214,7 +211,6 @@ describe('API Routes', () => {
           "geological_info_id": 1,
           "email":'papa@turing.io',
           "app": 'volcanoes',
-          "token": token
 
         })
         .end((err, response) => {
@@ -233,7 +229,6 @@ describe('API Routes', () => {
         .send({
           "email":'papa@turing.io',
           "app": 'volcanoes',
-          "token": token
         })
         .end((err, response) => {
           response.should.have.status(204);
@@ -247,7 +242,6 @@ describe('API Routes', () => {
         .send({
           "email":'papa@turing.io',
           "app": 'volcanoes',
-          "token": token
         })
         .end((err, response) => {
           response.should.have.status(404);
@@ -258,7 +252,7 @@ describe('API Routes', () => {
         });
     });
 
-    
+
   });
 
   describe('GET /api/v1/geo-info', () => {
@@ -291,13 +285,11 @@ describe('API Routes', () => {
           'tectonic': 'Subduction zone',
           'email':'papa@turing.io',
           'app': 'volcanoes',
-          'token': token
         })
         .end((err, response) => {
           response.should.have.status(201);
           response.should.be.json;
-          response.body.should.be.a('array');
-          response.body.length.should.equal(1);
+          response.body.should.be.a('object');
           done();
         });
     });
@@ -310,7 +302,6 @@ describe('API Routes', () => {
           'tectonic': 'Subduction zone',
           'email':'papa@turing.io',
           'app': 'volcanoes',
-          'token': token
         })
         .end((err, response) => {
           response.should.have.status(422);
@@ -328,7 +319,6 @@ describe('API Routes', () => {
           "rock_type": 'Andesite',
           "email":'papa@turing.io',
           "app": 'volcanoes',
-          "token": token
         })
         .end((err, response) => {
           response.should.have.status(200);
@@ -350,12 +340,10 @@ describe('API Routes', () => {
           "rock_type": 'Andesite',
           "email":'papa@turing.io',
           "app": 'volcanoes',
-          "token": token
         })
         .end((err, response) => {
           response.should.have.status(422);
-          response.res.text.should.equal('Please provide valid ' +
-          'key/value to update');
+          response.res.text.should.equal('Please provide valid key/value to update');
           done();
         });
     });
@@ -368,9 +356,9 @@ describe('API Routes', () => {
         .send({
           "email":'papa@turing.io',
           "app": 'volcanoes',
-          "token": token
         })
         .end((err, response) => {
+          console.log(response.locals)
           response.should.have.status(200);
           response.should.be.json;
           response.body.should.be.a('object');
@@ -388,12 +376,11 @@ describe('API Routes', () => {
         .send({
           "email":'papa@turing.io',
           "app": 'volcanoes',
-          "token": token
         })
         .end((err, response) => {
           response.should.have.status(400);
           response.res.text.should
-            .equal(`{"error":"Could not delete id 6, item not found."}`);
+            .equal("Could not delete id 6, item not found.");
           done();
         });
     });

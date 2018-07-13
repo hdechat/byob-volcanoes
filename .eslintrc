@@ -85,7 +85,6 @@
     "id-length": "error",
     "id-blacklist": [
       "error",
-      "e",
       "cb",
       "callback",
       "obj",

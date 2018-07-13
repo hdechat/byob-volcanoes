@@ -110,7 +110,7 @@ describe('API Routes', () => {
   });
 
   describe('PUT /api/v1/volcanoes/:id', () => {
-    it.only('should return item(s) that were updated', done => {
+    it('should return item(s) that were updated', done => {
       chai.request(server)
         .put('/api/v1/volcanoes/1')
         .send({
@@ -139,8 +139,7 @@ describe('API Routes', () => {
         .end((err, response) => {
           response.should.have.status(404);
           response.res.text.should
-            .equal('{"error":"Invalid key. See README' +
-            'for valid PUT body instructions"}');
+            .equal('{"error":"Could not find project with id: 7"}');
           done();
         });
     });

@@ -39,7 +39,6 @@ describe('API Routes', () => {
       });
   });
 
-
   describe('GET /api/v1/volcanoes', () => {
     it('should return all the volcanoes', done => {
       chai.request(server)
@@ -195,6 +194,34 @@ describe('API Routes', () => {
         .end((err, response) => {
           response.should.have.status(422);
           response.res.text.should.equal('You must use a valid request body');
+          done();
+        });
+    });
+  });
+
+  describe('DELETE /api/v1/geo-info/:id', () => {
+    it('should return deleted item and all relational items', done => {
+      chai.request(server)
+        .delete('/api/v1/geo-info/1')
+        .end((err, response) => {
+          response.should.have.status(200);
+          response.should.be.json;
+          response.body.should.be.a('object');
+          response.body.should.have.property('deletedVolcanoes');
+          response.body.should.have.property('deletedGeoInfo');
+          response.body.deletedVolcanoes.should.deep.equal([3]);
+          response.body.deletedGeoInfo.should.equal(1);
+          done();
+        });
+    });
+
+    it('should return status 400 when item to delete is not found', done => {
+      chai.request(server)
+        .delete('/api/v1/geo-info/6')
+        .end((err, response) => {
+          response.should.have.status(400);
+          response.res.text.should
+            .equal(`{"error":"Could not delete id 6, item not found."}`);
           done();
         });
     });

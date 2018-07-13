@@ -13,24 +13,29 @@ app.set('port', process.env.PORT || 3000);
 app.set('secretKey', process.env.secretKey);
 
 const checkAuth = (request, response, next) => {
-  const { token, email } = request.body;
-  if (!token) {
-    response.status(400)
-      .send('You must include an authentication token to access this endpoint. To receive a token visit api/v1/auth');
-  } else {
-    jwt.verify(token, app.get('secretKey'), (err, decoded) => {
-      if (err) {
-        response.status(403).send('Invalid token');
-      } else {
-        const adminCheck = email.slice(email
-          .search(/@/)).match(/@turing.io/);
-        if (decoded.app === 'volcanoes' && adminCheck) {
-          next();
+  if (process.env.NODE_ENV === 'development') {
+    const { token, email } = request.body;
+    if (!token) {
+      response.status(400)
+        .send('You must include an authentication token to access this endpoint. To receive a token visit api/v1/auth');
+    } else {
+      jwt.verify(token, app.get('secretKey'), (err, decoded) => {
+        if (err) {
+          response.status(403).send('Invalid token');
         } else {
-          response.status(401).send('You do not have administrative access');
+          const adminCheck = email.slice(email
+            .search(/@/)).match(/@turing.io/);
+          if (decoded.app === 'volcanoes' && adminCheck) {
+            next();
+          } else {
+            response.status(401).send('You do not have administrative access');
+          }
         }
-      }
-    });
+      });
+    }
+  } else {
+    console.log('hi')
+    next();
   }
 };
 
@@ -195,16 +200,19 @@ const verifyPostBody = (request, response, next) => {
   }
 };
 
-app.post('/api/v1/geo-info', checkAuth, verifyPostBody, (request, response) => {
+app.post('/api/v1/geo-info', checkAuth, verifyPostBody, (request, response, next) => {
   const geoInfo = deleteSensitiveInfo(request.body);
+  const { volcano_type, rock_type, tectonic } = geoInfo
 
-  database('geological_info').insert(geoInfo, 'id')
-    .then(geoInfoId => {
-      response.status(201).json(geoInfoId);
-    })
-    .catch(error => {
-      response.status(500).json(error);
-    });
+
+    database('geological_info').insert(geoInfo, 'id')
+      .then(geoInfoId => {
+        response.status(201).json({volcano_type, rock_type, tectonic});
+      })
+      .catch(error => {
+        response.status(500).json(error);
+      });
+
 });
 
 const verifyKeys = (request, response, next) => {
@@ -249,9 +257,7 @@ const verifyDelete = (request, response, next) => {
       if (deletedItem.length) {
         next();
       } else {
-        response.status(400).send({
-          error: `Could not delete id ${id}, item not found.`
-        });
+        response.status(400).send(`Could not delete id ${id}, item not found.`);
       }
     });
 };

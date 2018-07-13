@@ -18,6 +18,8 @@
       <input id='applicaiton-name'type='text' />
       <div></div>
       <button id='submit-jwt-request' type='submit'>Submit</button>
+      <div class='form-helper-text'>Your Token:</div>
+      <div id='received-token' type="text"></div>
     </form>
   </body>
   <script type='text/javascript'>
@@ -29,7 +31,6 @@
 
         const email = document.getElementById('user-email').value;
         const appName = document.getElementById('applicaiton-name').value;
-
         if (email && appName) {
           fetch('/api/v1/auth', {
             method: 'POST',
@@ -41,11 +42,16 @@
               app: appName
             })
           })
-          .then(res => console.log(res))
-          .catch(error => console.log(error));
+          .then(res => res.json())
+          .catch(error => console.log(error))
+          .then(token => {
+            document.getElementById('received-token').innerText = token;
+          })
         }
       });
     };
+
+
 
   initApp();
   </script>

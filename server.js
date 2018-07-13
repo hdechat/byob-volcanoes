@@ -228,7 +228,9 @@ const verifyDelete = (request, response, next) => {
       if (deletedItem.length) {
         next();
       } else {
-        response.status(400).send('Requested delete item not found');
+        response.status(400).send({
+          error: `Could not delete id ${id}, item not found.`
+        });
       }
     });
 };
@@ -241,9 +243,9 @@ app.delete('/api/v1/geo-info/:id', checkAuth, verifyDelete, (request, response) 
     .then(relatedVolcanoes => {
       deletedVolcanoes.push(relatedVolcanoes);
       database.select('*').from('geological_info').where('id', id).del()
-        .then(deletedObject => response.status(200).json({
+        .then(deletedGeoInfo => response.status(200).json({
           deletedVolcanoes,
-          deletedObject
+          deletedGeoInfo
         }));
     })
     .catch(error => response.status(500).json(error));

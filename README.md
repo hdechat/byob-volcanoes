@@ -196,4 +196,4 @@ Example response:
 }
 ```
 
-Built with 💗 by (Helen Dechat)[https://github.com/hdechat] and (Krista Handel)[https://github.com/meloncatty]
+Built with 💗 by [Helen Dechat](https://github.com/hdechat) and [Krista Handel](https://github.com/meloncatty)

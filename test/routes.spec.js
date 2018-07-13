@@ -143,6 +143,22 @@ describe('API Routes', () => {
           done();
         });
     });
+
+    it('should return new post item id', done => {
+      chai.request(server)
+        .post('/api/v1/volcanoes')
+        .send({
+          "name": "Agua",
+          "country":"Guatemala",
+          "geological_info_id": 1
+        })
+        .end((err, response) => {
+          response.should.have.status(201);
+          response.should.be.json;
+          response.should.be.a('object');
+          done();
+        });
+    });
   });
 
   describe('POST /api/v1/geo-info', () => {

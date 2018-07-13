@@ -34,6 +34,10 @@ const checkAuth = (request, response, next) => {
   }
 };
 
+app.get('/', (request, response) => {
+  response.send('Success');
+});
+
 app.get('/api/v1/volcanoes', (request, response) => {
   database('volcanoes').select()
     .then(volcanoes => {
@@ -194,12 +198,14 @@ const verifyKeys = (request, response, next) => {
 
   database('geological_info').where('id', id).select()
     .then(returnedInfo => {
-      const hasKeys = Object.keys(geoInfo)
-        .find(key => Object.keys(returnedInfo[0]).includes(key));
-      if (hasKeys) {
-        next();
+      if (returnedInfo.length) {
+        const hasKeys = Object.keys(geoInfo)
+          .find(key => Object.keys(returnedInfo[0]).includes(key));
+        if (hasKeys) {
+          next();
+        }
       } else {
-        response.status(422).send('Please provide valide key/value to update');
+        response.status(422).send('Please provide valid key/value to update');
       }
     });
 };
@@ -228,7 +234,9 @@ const verifyDelete = (request, response, next) => {
       if (deletedItem.length) {
         next();
       } else {
-        response.status(400).send('Requested delete item not found');
+        response.status(400).send({
+          error: `Could not delete id ${id}, item not found.`
+        });
       }
     });
 };
@@ -241,9 +249,9 @@ app.delete('/api/v1/geo-info/:id', checkAuth, verifyDelete, (request, response) 
     .then(relatedVolcanoes => {
       deletedVolcanoes.push(relatedVolcanoes);
       database.select('*').from('geological_info').where('id', id).del()
-        .then(deletedObject => response.status(200).json({
+        .then(deletedGeoInfo => response.status(200).json({
           deletedVolcanoes,
-          deletedObject
+          deletedGeoInfo
         }));
     })
     .catch(error => response.status(500).json(error));

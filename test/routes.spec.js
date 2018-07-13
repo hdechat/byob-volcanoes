@@ -109,6 +109,43 @@ describe('API Routes', () => {
     });
   });
 
+  describe('PUT /api/v1/volcanoes/:id', () => {
+    it.only('should return item(s) that were updated', done => {
+      chai.request(server)
+        .put('/api/v1/volcanoes/1')
+        .send({
+          name: 'Agua',
+          country: 'Guatemala'
+        })
+        .end((err, response) => {
+          response.should.have.status(200);
+          response.should.be.json;
+          response.body.should.be.a('object');
+          response.body.should.have.property('name');
+          response.body.name.should.equal('Agua');
+          response.body.should.have.property('country');
+          response.body.country.should.equal('Guatemala');
+          done();
+        });
+    });
+
+    it('should return 404 when item to update does not exist', done => {
+      chai.request(server)
+        .put('/api/v1/volcanoes/7')
+        .send({
+          name: 'Agua',
+          country: 'Guatemala'
+        })
+        .end((err, response) => {
+          response.should.have.status(404);
+          response.res.text.should
+            .equal('{"error":"Invalid key. See README' +
+            'for valid PUT body instructions"}');
+          done();
+        });
+    });
+  });
+
   describe('GET /api/v1/volcanoes/country/:country', () => {
     it('should return all the volcano names for the given country', done => {
       chai.request(server)

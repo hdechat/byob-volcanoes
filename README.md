@@ -1,4 +1,4 @@
-# 🌋 byob-volcanoes 🌋
+# 🌋 byob-volcanoes 🌋  [![Build Status](https://travis-ci.org/hdechat/byob-volcanoes.svg?branch=master)](https://travis-ci.org/hdechat/byob-volcanoes)
 
 ## Application installation
 

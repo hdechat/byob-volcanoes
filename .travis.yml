@@ -7,6 +7,8 @@ before_script:
 - psql -c 'CREATE DATABASE volcanoes;' -U postgres
 notifications:
   email: false
+script:
+  - "npm run lint"
 deploy:
   provider: heroku
   api_key:
